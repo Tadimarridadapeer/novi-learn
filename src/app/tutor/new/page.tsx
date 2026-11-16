@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { WhiteboardCanvas } from '@/components/whiteboard/WhiteboardCanvas';
 import { TutorPanel } from '@/components/tutor/TutorPanel';
 import { WhiteboardCommand, TutorState, TeachingStrategy } from '@/lib/tutor/types';
-import { LogOut, Sparkles } from 'lucide-react';
 
 function TutorWorkspaceContent() {
   const searchParams = useSearchParams();
@@ -84,7 +83,7 @@ function TutorWorkspaceContent() {
   const handleSendMessage = async (input: string) => {
     if (!sessionId || isLoading) return;
 
-    // 1. Instantly append EXACT student message to UI (NO DUPLICATE CHAT MESSAGES)
+    // 1. Instantly append EXACT student message to UI
     const updatedMessages = [...messages, { sender: 'STUDENT' as const, text: input }];
     setMessages(updatedMessages);
     setTutorState('THINKING');
@@ -94,7 +93,7 @@ function TutorWorkspaceContent() {
     setRecognitionState({ status: 'IDLE', recognizedText: '', confidence: 0 });
 
     try {
-      // 2. Call API route to evaluate answer with Math Verifier & State Machine
+      // 2. Call API route to evaluate answer
       const res = await fetch(`/api/sessions/${sessionId}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -118,7 +117,7 @@ function TutorWorkspaceContent() {
           setWhiteboardCommands((prev) => [...prev, ...resp.whiteboardCommands]);
         }
 
-        // If session is completed, navigate to Summary page after brief delay
+        // If session is completed, navigate to Summary page
         if (resp.state === 'SESSION_COMPLETE') {
           setTimeout(() => {
             router.push(`/summary/${encodeURIComponent((sessionId || 'completed').trim())}`);
@@ -136,28 +135,26 @@ function TutorWorkspaceContent() {
   return (
     <div className="w-screen h-screen bg-slate-100 flex flex-col overflow-hidden select-none">
       {/* Top Session Workspace Bar */}
-      <header className="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-20 shadow-sm">
+      <header className="h-14 bg-white border-b border-black/10 px-6 flex items-center justify-between z-20 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              {topicTitle}
-              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 font-semibold">
-                1-on-1 Session
-              </span>
-            </h2>
-          </div>
+          <span className="font-extrabold text-sm tracking-tight text-black">
+            Novi Learn
+          </span>
+          <span className="text-black/30">|</span>
+          <h2 className="text-sm font-bold text-black flex items-center gap-2">
+            {topicTitle}
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-800 border border-brand-200 font-bold">
+              1-on-1 Session
+            </span>
+          </h2>
         </div>
 
         {/* Exit Session Button */}
         <button
           onClick={() => router.push('/dashboard')}
-          className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors flex items-center gap-2"
+          className="px-3.5 py-1.5 rounded-lg bg-black/5 hover:bg-black/10 text-black text-xs font-bold border border-black/10 transition-colors"
         >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>Exit Workspace</span>
+          Exit Workspace
         </button>
       </header>
 
@@ -193,7 +190,7 @@ function TutorWorkspaceContent() {
 
 export default function TutorWorkspacePage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-slate-400">Loading Novi Learn Workspace...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-black/50">Loading Novi Learn Workspace...</div>}>
       <TutorWorkspaceContent />
     </Suspense>
   );

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Settings, Mic, Volume2, Cpu, Key, Check } from 'lucide-react';
 
 export default function SettingsPage() {
   const [provider, setProvider] = useState<'demo' | 'gemini' | 'openai'>('demo');
@@ -15,22 +14,20 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto w-full px-6 py-10 space-y-8">
+    <div className="max-w-4xl mx-auto w-full px-6 py-10 space-y-8 bg-white text-black">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-slate-100 flex items-center gap-3">
-          <Settings className="w-7 h-7 text-brand-400" />
+        <h1 className="text-3xl font-extrabold text-black">
           Application & Tutor Settings
         </h1>
-        <p className="text-slate-400 text-sm">
+        <p className="text-black/60 text-sm">
           Configure voice interaction, speech rate, and AI engine preferences.
         </p>
       </div>
 
-      <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 space-y-8 shadow-xl">
+      <div className="bg-white rounded-2xl p-6 border border-black/10 space-y-8 shadow-sm">
         {/* AI Engine Configuration */}
         <div className="space-y-4">
-          <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-brand-400" />
+          <h3 className="text-lg font-bold text-black">
             AI Orchestrator Engine Mode
           </h3>
 
@@ -39,8 +36,8 @@ export default function SettingsPage() {
               onClick={() => setProvider('demo')}
               className={`p-4 rounded-xl border text-left transition-all space-y-2 ${
                 provider === 'demo'
-                  ? 'bg-brand-950/60 border-brand-500 text-brand-200'
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  ? 'bg-brand-50 border-brand-600 text-black'
+                  : 'bg-white border-black/10 text-black/70 hover:border-black/30'
               }`}
             >
               <div className="text-sm font-bold">Demo Mode (Offline)</div>
@@ -53,8 +50,8 @@ export default function SettingsPage() {
               onClick={() => setProvider('gemini')}
               className={`p-4 rounded-xl border text-left transition-all space-y-2 ${
                 provider === 'gemini'
-                  ? 'bg-brand-950/60 border-brand-500 text-brand-200'
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  ? 'bg-brand-50 border-brand-600 text-black'
+                  : 'bg-white border-black/10 text-black/70 hover:border-black/30'
               }`}
             >
               <div className="text-sm font-bold">Google Gemini 2.5</div>
@@ -67,8 +64,8 @@ export default function SettingsPage() {
               onClick={() => setProvider('openai')}
               className={`p-4 rounded-xl border text-left transition-all space-y-2 ${
                 provider === 'openai'
-                  ? 'bg-brand-950/60 border-brand-500 text-brand-200'
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  ? 'bg-brand-50 border-brand-600 text-black'
+                  : 'bg-white border-black/10 text-black/70 hover:border-black/30'
               }`}
             >
               <div className="text-sm font-bold">OpenAI GPT-4o</div>
@@ -79,9 +76,8 @@ export default function SettingsPage() {
           </div>
 
           {provider !== 'demo' && (
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <label className="text-xs font-semibold text-slate-300 flex items-center gap-2">
-                <Key className="w-3.5 h-3.5 text-brand-400" />
+            <div className="p-4 rounded-xl bg-slate-50 border border-black/10 space-y-2">
+              <label className="text-xs font-semibold text-black">
                 API Key for {provider.toUpperCase()}
               </label>
               <input
@@ -89,23 +85,22 @@ export default function SettingsPage() {
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder={`Enter your ${provider} API Key...`}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500"
+                className="w-full bg-white border border-black/20 rounded-xl px-4 py-2.5 text-sm text-black placeholder-black/40 focus:outline-none focus:border-brand-600"
               />
             </div>
           )}
         </div>
 
         {/* Voice Preferences */}
-        <div className="space-y-4 pt-6 border-t border-slate-800">
-          <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-            <Volume2 className="w-5 h-5 text-brand-400" />
+        <div className="space-y-4 pt-6 border-t border-black/10">
+          <h3 className="text-lg font-bold text-black">
             Voice Output & Speech Synthesis
           </h3>
 
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs font-medium text-slate-300">
+            <div className="flex items-center justify-between text-xs font-medium text-black/70">
               <span>Tutor Speaking Rate</span>
-              <span className="font-mono">{voiceSpeed}x</span>
+              <span className="font-mono font-bold text-black">{voiceSpeed}x</span>
             </div>
             <input
               type="range"
@@ -114,21 +109,21 @@ export default function SettingsPage() {
               step="0.1"
               value={voiceSpeed}
               onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
-              className="w-full accent-brand-500 bg-slate-800 rounded-lg cursor-pointer"
+              className="w-full accent-brand-600 bg-black/10 rounded-lg cursor-pointer"
             />
           </div>
         </div>
 
         {/* Save button */}
-        <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
+        <div className="pt-4 border-t border-black/10 flex items-center justify-end gap-3">
           {saved && (
-            <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
-              <Check className="w-4 h-4" /> Preferences saved!
+            <span className="text-xs text-brand-700 font-bold">
+              Preferences saved!
             </span>
           )}
           <button
             onClick={handleSave}
-            className="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-sm font-semibold transition-colors shadow-md"
+            className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-sm font-bold transition-colors shadow-sm"
           >
             Save Preferences
           </button>

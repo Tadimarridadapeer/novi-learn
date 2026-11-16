@@ -9,39 +9,38 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          50: '#f0f7ff',
-          100: '#e0effe',
-          200: '#bae0fd',
-          300: '#7cc8fc',
-          400: '#36b0fa',
-          500: '#0c94eb',
-          600: '#0077cd',
-          700: '#025fa8',
-          800: '#06518a',
-          900: '#0c4473',
-          950: '#082b4c',
+          50: '#fbf4f6',
+          100: '#f5e8eb',
+          200: '#ebd3d8',
+          300: '#dab1bb',
+          400: '#c28595',
+          500: '#a85d72',
+          600: '#800020', // Classic Rich Burgundy Accent
+          700: '#6f001c',
+          800: '#5c0018',
+          900: '#4a0013',
+          950: '#2d000a',
         },
-        sage: {
-          50: '#f4f7f5',
-          100: '#e3ece6',
-          500: '#52796f',
-          800: '#2f3e46',
-          900: '#1a2421',
-        },
-        chalkboard: {
-          bg: '#1e293b',
-          grid: '#334155',
-          accent: '#38bdf8',
-          highlight: '#fef08a',
-          text: '#f8fafc',
-          muted: '#94a3b8'
-        }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-        handwriting: ['Comic Sans MS', 'Caveat', 'cursive', 'sans-serif']
-      }
+      },
+      animation: {
+        'float-slow': 'float 18s ease-in-out infinite',
+        'float-medium': 'float 12s ease-in-out infinite reverse',
+        'pulse-subtle': 'pulseSlow 6s ease-in-out infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
+          '50%': { transform: 'translateY(-24px) translateX(12px)' },
+        },
+        pulseSlow: {
+          '0%, 100%': { opacity: '0.35' },
+          '50%': { opacity: '0.65' },
+        },
+      },
     },
   },
   plugins: [],

@@ -5,33 +5,45 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 15, 23, 42;
-  --background-rgb: 248, 250, 252;
+  --foreground-rgb: 17, 24, 39;
+  --background-rgb: 255, 255, 255;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background-color: rgb(var(--background-rgb));
+  color: #111827;
+  background-color: #ffffff;
   min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
 
-/* Custom scrollbar */
+/* Custom minimal scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #f9fafb;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #e5e7eb;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #d1d5db;
+}
+
+/* Subtle dot matrix grid background */
+.bg-dots-pattern {
+  background-image: radial-gradient(rgba(17, 24, 39, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Subtle dark dot matrix grid for darker sections */
+.bg-dots-pattern-subtle {
+  background-image: radial-gradient(rgba(128, 0, 32, 0.12) 1.2px, transparent 1.2px);
+  background-size: 28px 28px;
 }
