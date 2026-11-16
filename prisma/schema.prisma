@@ -1,0 +1,204 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  name          String
+  passwordHash  String?
+  role          String          @default("student") // student | admin
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  profile       StudentProfile?
+  sessions      TutorSession[]
+}
+
+model StudentProfile {
+  id                String            @id @default(uuid())
+  userId            String            @unique
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gradeLevel        String            @default("High School")
+  preferredLearning String            @default("guided_discovery") // guided_discovery | step_by_step | visual
+  overallConfidence Float             @default(0.5)
+  skills            StudentProgress[]
+  mistakes          StudentMistake[]
+  memories          StudentMemory[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model Subject {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String
+  topics      Topic[]
+  createdAt   DateTime @default(now())
+}
+
+model Topic {
+  id           String         @id @default(uuid())
+  subjectId    String
+  subject      Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  title        String
+  slug         String         @unique
+  description  String
+  category     String         @default("Algebra") // e.g. Algebra
+  difficulty   String         @default("Intermediate") // Beginner | Intermediate | Advanced
+  estDuration  Int            @default(15) // minutes
+  order        Int            @default(1)
+  concepts     Concept[]
+  questions    Question[]
+  sessions     TutorSession[]
+  progress     StudentProgress[]
+  createdAt    DateTime       @default(now())
+}
+
+model Concept {
+  id          String   @id @default(uuid())
+  topicId     String
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  name        String
+  description String
+  prerequisites String? // JSON string array of skill IDs
+  order       Int      @default(1)
+  createdAt   DateTime @default(now())
+}
+
+model Skill {
+  id          String            @id @default(uuid())
+  name        String            @unique
+  category    String
+  description String
+  progress    StudentProgress[]
+}
+
+model Question {
+  id             String   @id @default(uuid())
+  topicId        String
+  topic          Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  problemText    String
+  latex          String
+  solution       String
+  hints          String   // JSON array of hints
+  expectedSteps  String   // JSON array of steps
+  difficulty     String   @default("Medium")
+  createdAt      DateTime @default(now())
+}
+
+model TutorSession {
+  id                String            @id @default(uuid())
+  userId            String
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId           String
+  topic             Topic             @relation(fields: [topicId], references: [id])
+  status            String            @default("ACTIVE") // ACTIVE | COMPLETED | PAUSED
+  currentState      String            @default("GREETING")
+  currentStrategy   String            @default("GUIDED_DISCOVERY")
+  confidenceScore   Float             @default(0.5)
+  startedAt         DateTime          @default(now())
+  endedAt           DateTime?
+  messages          SessionMessage[]
+  events            SessionEvent[]
+  whiteboardSession WhiteboardSession?
+  evaluation        EvaluationResult?
+}
+
+model SessionMessage {
+  id          String       @id @default(uuid())
+  sessionId   String
+  session     TutorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sender      String       // STUDENT | TUTOR | SYSTEM
+  text        String
+  audioUrl    String?
+  stateAtMsg  String?
+  strategyAtMsg String?
+  createdAt   DateTime     @default(now())
+}
+
+model SessionEvent {
+  id          String       @id @default(uuid())
+  sessionId   String
+  session     TutorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  eventType   String       // STATE_CHANGE | STRATEGY_CHANGE | MISTAKE_DETECTED | WHITEBOARD_ACTION
+  payload     String       // JSON metadata
+  createdAt   DateTime     @default(now())
+}
+
+model StudentProgress {
+  id          String         @id @default(uuid())
+  profileId   String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  topicId     String
+  topic       Topic          @relation(fields: [topicId], references: [id])
+  skillId     String?
+  skill       Skill?         @relation(fields: [skillId], references: [id])
+  proficiency Float          @default(0.0) // 0.0 - 1.0
+  lastStudied DateTime       @default(now())
+  sessionsCount Int          @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([profileId, topicId])
+}
+
+model StudentMistake {
+  id          String         @id @default(uuid())
+  profileId   String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  category    String         // sign_error | factor_selection | calculation_error | conceptual
+  description String
+  example     String?
+  count       Int            @default(1)
+  lastOccurred DateTime      @default(now())
+}
+
+model StudentMemory {
+  id          String         @id @default(uuid())
+  profileId   String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  key         String
+  value       String
+  updatedAt   DateTime       @updatedAt
+}
+
+model WhiteboardSession {
+  id          String            @id @default(uuid())
+  sessionId   String            @unique
+  session     TutorSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  events      WhiteboardEvent[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model WhiteboardEvent {
+  id                  String            @id @default(uuid())
+  whiteboardSessionId String
+  whiteboardSession   WhiteboardSession @relation(fields: [whiteboardSessionId], references: [id], onDelete: Cascade)
+  action              String            // WRITE | DRAW | ERASE | HIGHLIGHT | GRAPH | CIRCLE | ARROW | CLEAR | FOCUS
+  data                String            // JSON representation of position, content, target, graph math
+  sequence            Int               @default(1)
+  createdAt           DateTime          @default(now())
+}
+
+model EvaluationResult {
+  id                 String       @id @default(uuid())
+  sessionId          String       @unique
+  session            TutorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  mathAccuracyScore  Float        @default(1.0)
+  explanationQuality Float        @default(0.9)
+  adaptationScore    Float        @default(0.85)
+  mistakeDetection   Float        @default(1.0)
+  whiteboardScore    Float        @default(0.95)
+  overallScore       Float        @default(0.92)
+  details            String       // JSON string evaluation summary
+  createdAt          DateTime     @default(now())
+}
